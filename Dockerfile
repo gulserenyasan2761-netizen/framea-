@@ -1,6 +1,17 @@
 FROM python:3.9-slim
-RUN apt-get update && apt-get install -y chromium chromium-driver
+
+# Chrome ve Selenium bağımlılıklarını kur
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    unzip \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY . .
-RUN pip install -r requirements.txt
-CMD gunicorn bot:app --bind 0.0.0.0:$PORT
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Render'da kullandığımız komut burada da iş görür
+CMD ["python", "bot.py"]
