@@ -18,7 +18,6 @@ app = Flask(__name__)
 
 def get_driver():
     options = Options()
-    # RAM'i korumak için en katı ayarlar
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -28,7 +27,7 @@ def get_driver():
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-infobars")
     
-    # Otomatik driver yönetimi
+    # Railway ve Docker için otomatik driver kurulumu
     service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
     driver = webdriver.Chrome(service=service, options=options)
     
@@ -41,22 +40,22 @@ def get_driver():
                 for cookie in cookies:
                     driver.add_cookie(cookie)
                 driver.refresh()
-                print("🍪 Cookies yüklendi.", flush=True)
+                print("🍪 Cookies başarıyla yüklendi.", flush=True)
             except Exception as e:
-                print(f"⚠️ Cookie hatası: {e}", flush=True)
+                print(f"⚠️ Cookie yüklenirken hata: {e}", flush=True)
     return driver
 
 def bot_loop():
-    print("🚀 Bot başlatılıyor...", flush=True)
+    print("🚀 Bot döngüsü başlatılıyor...", flush=True)
     try:
         driver = get_driver()
-        print("✅ Driver hazır.", flush=True)
+        print("✅ Driver hazır, bot yayında!", flush=True)
         
         last_promotion_time = time.time()
         last_msg_id = ""
 
         while True:
-            # 10 dakikada bir tanıtım
+            # 10 dakikada bir tanıtım mesajı
             if time.time() - last_promotion_time > 600:
                 try:
                     chat_box = driver.find_element(By.CSS_SELECTOR, "#input")
@@ -66,7 +65,7 @@ def bot_loop():
                     last_promotion_time = time.time()
                 except: pass
 
-            # Mesajları kontrol et
+            # Mesaj kontrolü
             try:
                 messages = driver.find_elements(By.CSS_SELECTOR, "#message")
                 if messages:
@@ -86,14 +85,16 @@ def bot_loop():
                         chat_box.send_keys(Keys.ENTER)
                         print(f"✅ Cevap gönderildi: {cevap}", flush=True)
             except: pass
-            time.sleep(10) # Belleği yormamak için süreyi 10 saniyeye çıkarıyoruz
+            time.sleep(5)
     except Exception as e:
         print(f"❌ KRİTİK HATA: {e}", flush=True)
 
 @app.route('/')
 def home():
-    return "DiamondPickaxe AI - Railway Aktif!"
+    return "DiamondPickaxe AI - Bot Aktif ve Çalışıyor!"
 
 if __name__ == "__main__":
     Thread(target=bot_loop, daemon=True).start()
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    # Railway'in atadığı portu otomatik al
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
