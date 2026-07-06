@@ -9,7 +9,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from threading import Thread
 
-# AYARLAR
 VIDEO_ID = "5jka-H-Hvy4"
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 client = Groq(api_key=GROQ_API_KEY)
@@ -20,70 +19,57 @@ def get_driver():
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-blink-features=AutomationControlled") # BOT OLDUĞUNU GİZLE
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
     
     driver = webdriver.Chrome(options=options)
     driver.get(f"https://www.youtube.com/live_chat?v={VIDEO_ID}")
     
-    # Cookie'leri yükle
-    try:
+    # Cookie Yükleme
+    if os.path.exists('cookies.json'):
         with open('cookies.json', 'r') as f:
             cookies = json.load(f)
             for cookie in cookies:
                 try:
                     driver.add_cookie(cookie)
-                except:
-                    continue
+                except: continue
         driver.refresh()
-        time.sleep(10) # Sayfanın oturumla yüklenmesi için bekle
-    except Exception as e:
-        print(f"Cookie hatası: {e}")
+        print("🍪 Cookies yüklendi ve sayfa yenilendi.")
+    else:
+        print("⚠️ HATA: cookies.json dosyası bulunamadı!")
+        
+    time.sleep(10)
     return driver
 
 def bot_loop():
-    driver = get_driver()
-    print("🚀 Bot yayına giriş yaptı, mesajlar dinleniyor...")
-    send_message("Merhaba, ben DiamondPickaxe AI! Frame AI'ın kardeşiyim. Sorularınızı !bot yazarak sorabilirsiniz.")
+    print("🚀 Bot döngüsü başlatılıyor...")
     try:
-        chat_box = driver.find_element(By.ID, "input")
-        chat_box.send_keys("Bot aktif edildi!")
-        chat_box.send_keys(Keys.ENTER)
-        print("✅ Başlangıç mesajı gönderildi!")
-    except Exception as e:
-        print(f"⚠️ Başlangıç mesajı gönderilemedi: {e}")
-    last_message = ""
-    
-    while True:
+        driver = get_driver()
+        print("✅ Driver başarılı.")
+        
+        # Sayfayı kontrol et
+        print(f"DEBUG: Sayfa başlığı: {driver.title}")
+        
+        # Chat giriş kutusunu bulmak için daha geniş bir seçici
+        # Bazen 'input' bazen de 'input-container' kullanılır
+        chat_box = None
         try:
-            # Chat mesajlarını bul
+            chat_box = driver.find_element(By.CSS_SELECTOR, "#input")
+            chat_box.send_keys("Bot aktif edildi!")
+            chat_box.send_keys(Keys.ENTER)
+            print("✅ Başlangıç mesajı gönderildi!")
+        except:
+            print("❌ Input alanı bulunamadı! Sayfa içeriği: ", driver.page_source[:500])
+
+        while True:
             elements = driver.find_elements(By.CSS_SELECTOR, "#message")
             if elements:
-                current_message = elements[-1].text
-                if current_message != last_message:
-                    last_message = current_message
-                    print(f"💬 Yeni mesaj: {current_message}")
-                    
-                    if "!bot" in current_message.lower():
-                        soru = current_message.replace("!bot", "").strip()
-                        print(f"🤖 İşleniyor: {soru}")
-                        
-                        completion = client.chat.completions.create(
-                            messages=[{"role": "user", "content": soru}],
-                            model="llama-3.1-8b-instant"
-                        )
-                        cevap = completion.choices[0].message.content[:150]
-                        
-                        # Yazma alanı
-                        chat_box = driver.find_element(By.ID, "input")
-                        chat_box.send_keys(cevap)
-                        chat_box.send_keys(Keys.ENTER)
-                        print(f"✅ Gönderildi: {cevap}")
+                son = elements[-1].text
+                print(f"💬 Son görülen: {son}")
+            time.sleep(15) # Çok sık sorgu atma, engellenirsin
             
-            time.sleep(5)
-        except Exception as e:
-            print(f"Döngü hatası: {e}")
-            time.sleep(10)
+    except Exception as e:
+        print(f"❌ KRİTİK HATA: {e}")
 
 @app.route('/')
 def home():
