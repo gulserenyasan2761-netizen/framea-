@@ -18,14 +18,17 @@ app = Flask(__name__)
 
 def get_driver():
     options = Options()
+    # RAM'i korumak için en katı ayarlar
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
+    options.add_argument("--single-process")
     options.add_argument("--no-zygote")
-    options.add_argument("user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-infobars")
     
-    # Otomatik driver yönetimi ile sürüm uyuşmazlığını engelliyoruz
+    # Otomatik driver yönetimi
     service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
     driver = webdriver.Chrome(service=service, options=options)
     
@@ -33,12 +36,14 @@ def get_driver():
     
     if os.path.exists('cookies.json'):
         with open('cookies.json', 'r') as f:
-            cookies = json.load(f)
-            for cookie in cookies:
-                try: driver.add_cookie(cookie)
-                except: continue
-        driver.refresh()
-        print("🍪 Cookies yüklendi.", flush=True)
+            try:
+                cookies = json.load(f)
+                for cookie in cookies:
+                    driver.add_cookie(cookie)
+                driver.refresh()
+                print("🍪 Cookies yüklendi.", flush=True)
+            except Exception as e:
+                print(f"⚠️ Cookie hatası: {e}", flush=True)
     return driver
 
 def bot_loop():
@@ -51,7 +56,7 @@ def bot_loop():
         last_msg_id = ""
 
         while True:
-            # 10 dakikada bir tanıtım mesajı
+            # 10 dakikada bir tanıtım
             if time.time() - last_promotion_time > 600:
                 try:
                     chat_box = driver.find_element(By.CSS_SELECTOR, "#input")
@@ -61,7 +66,7 @@ def bot_loop():
                     last_promotion_time = time.time()
                 except: pass
 
-            # Mesaj kontrolü
+            # Mesajları kontrol et
             try:
                 messages = driver.find_elements(By.CSS_SELECTOR, "#message")
                 if messages:
@@ -79,9 +84,9 @@ def bot_loop():
                         chat_box = driver.find_element(By.CSS_SELECTOR, "#input")
                         chat_box.send_keys(cevap)
                         chat_box.send_keys(Keys.ENTER)
-                        print(f"✅ Cevap: {cevap}", flush=True)
+                        print(f"✅ Cevap gönderildi: {cevap}", flush=True)
             except: pass
-            time.sleep(5)
+            time.sleep(10) # Belleği yormamak için süreyi 10 saniyeye çıkarıyoruz
     except Exception as e:
         print(f"❌ KRİTİK HATA: {e}", flush=True)
 
