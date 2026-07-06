@@ -1,5 +1,5 @@
 pytchat
 groq
-selenium
-webdriver-manager
 flask
+selenium
+gunicorn
