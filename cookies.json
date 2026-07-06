@@ -1,0 +1,68 @@
+[
+  {
+    "name": "PREF",
+    "value": "f4",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "wide",
+    "value": "0",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "APISID",
+    "value": "ReGlE1DoWuqNyWID/AvAOleBwiwVBSiSKn",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "SAPISID",
+    "value": "jn-fItEPyimwgVVE/AazbEholndDtLlq-4",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "__Secure-1PAPISID",
+    "value": "jn-fItEPyimwgVVE/AazbEholndDtLlq-4",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "__Secure-3PAPISID",
+    "value": "jn-fItEPyimwgVVE/AazbEholndDtLlq-4",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "SID",
+    "value": "g.a000_wiLphH1xCvUrfp_HfcPGJH6N8YjECJcFpSLGPuZdS85BEFzRlijRV4ELVa2C3v9-FQrugACgYKASYSARcSFQHGX2MiOr_0y488VA59Lhs0DV3y6hoVAUF8yKoXwGNZ6_eupcqoLMpOObLp0076",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "CONSISTENCY",
+    "value": "AFeheW0G-kg05n-IyLZ_8-c9e1EAoCKVH2YAJLyLZfpSKY9bCRGwVf1edvYgKAduPlRsXDqVM3IWFebynSUanJUufLEsQF3aPGvrMIZ9uMcZ0qz0Fue_indAe0B-7LwjuVJzayK1vfiODf93",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "SIDCC",
+    "value": "AKEyXzUjYz97SlxqZpxga8N3n9wXcf-wNjpNg7hDKosYvsWX0wjpq4XbITCKWcR_4H1REv-pEg",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "ST-sbra4i",
+    "value": "session_logininfo",
+    "domain": ".youtube.com",
+    "path": "/"
+  },
+  {
+    "name": "ST-183jmdn",
+    "value": "session_logininfo",
+    "domain": ".youtube.com",
+    "path": "/"
+  }
+]
