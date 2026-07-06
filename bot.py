@@ -45,6 +45,13 @@ def bot_loop():
     driver = get_driver()
     print("🚀 Bot yayına giriş yaptı, mesajlar dinleniyor...")
     send_message("Merhaba, ben DiamondPickaxe AI! Frame AI'ın kardeşiyim. Sorularınızı !bot yazarak sorabilirsiniz.")
+    try:
+        chat_box = driver.find_element(By.ID, "input")
+        chat_box.send_keys("Bot aktif edildi!")
+        chat_box.send_keys(Keys.ENTER)
+        print("✅ Başlangıç mesajı gönderildi!")
+    except Exception as e:
+        print(f"⚠️ Başlangıç mesajı gönderilemedi: {e}")
     last_message = ""
     
     while True:
