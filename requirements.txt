@@ -1,5 +1,3 @@
-pytchat
-groq
 flask
+groq
 selenium
-gunicorn
